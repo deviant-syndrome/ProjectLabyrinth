@@ -19,7 +19,6 @@ const generateMaze = () => {
 }
 
 maxAPI.addHandler("solve", (alg, data) => {
-  console.log("ALGO is ", alg)
   if (alg === "Shortest path") {
     let solver = new solvers.ShortestPathMazeSolver(utils.fromBach(data))
     solver.traverse("", -1, -1)
@@ -28,16 +27,17 @@ maxAPI.addHandler("solve", (alg, data) => {
   } else {
     if (alg === "Blind mouse") {
       let solver = new solvers.BlindMouseSolver(utils.fromBach(data))
-      let res = solver.traverse("", 0, 0)
+      let res = solver.traverse("", -1, -1)
 
       maxAPI.outlet(res)
+    } else {
+      if (alg === "A-star") {
+        let solver = new solvers.AStarSolver(utils.fromBach(data))
+        let res = solver.traverse("", -1, -1)
+        maxAPI.outlet("()")
+      }
     }
-  }
-  //
-  // let solver = new solvers.ShortestPathMazeSolver(utils.fromBach(data))
-  // solver.traverse("", -1, -1)
-  //
-  // maxAPI.outlet(solver.getShortestSolution())
+  } 
 })
 
 maxAPI.addHandler("generate", (data) => {
