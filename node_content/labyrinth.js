@@ -34,7 +34,7 @@ maxAPI.addHandler("solve", (alg, data) => {
       if (alg === "A-star") {
         let solver = new solvers.AStarSolver(utils.fromBach(data))
         let res = solver.traverse("", -1, -1)
-        maxAPI.outlet("()")
+        maxAPI.outlet(res)
       }
     }
   } 

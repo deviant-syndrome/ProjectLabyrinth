@@ -217,7 +217,7 @@ class BlindMouseSolver extends ShortestPathMazeSolver {
 }
 
 class Node {
-  constructor(row, col, parent, g, h) {
+  constructor({ row, col }, parent, g, h) {
     this.row = row;
     this.col = col;
     this.parent = parent;
@@ -251,21 +251,18 @@ function lowestF(list) {
 function aStar(maze) {
   const ROWS = maze.length;
   const COLS = maze[0].length;
-  // constructor parametres are not correct. We need to fix them
+
   const start = new Node(findStart(maze), null, null, 0, 0);
   const end = new Node(findEnd(maze), null, null, 0, 0);
   const openList = [start];
   const closedList = [];
 
-  console.log("was here " + openList)
   while (openList.length) {
     const current = lowestF(openList);
     openList.splice(openList.indexOf(current), 1);
     closedList.push(current);
 
-    console.log("loop cycle " + current)
     if (current.isEqual(end)) {
-        console.log("REALLY?")
       return getPath(current);
     }
 
@@ -278,7 +275,7 @@ function aStar(maze) {
       const h = manhattanDistance(neighbor, end);
       const indexInOpenList = openList.findIndex(node => node.isEqual(neighbor));
       if (indexInOpenList === -1) {
-        openList.push(new Node(neighbor.row, neighbor.col, current, g, h));
+        openList.push(new Node({ row: neighbor.row, col: neighbor.col }, current, g, h));
       } else if (g + h < openList[indexInOpenList].f) {
         openList[indexInOpenList].g = g;
         openList[indexInOpenList].h = h;
@@ -286,7 +283,6 @@ function aStar(maze) {
       }
     }
   }
-
   return null;
 }
 
@@ -301,7 +297,7 @@ function findEnd(maze) {
 function find(maze, value) {
   for (let row = 0; row < maze.length; row++) {
     for (let col = 0; col < maze[0].length; col++) {
-      if (maze[row][col] === value) {
+      if (maze[row][col] == value) {
         return { row, col };
       }
     }
@@ -342,17 +338,23 @@ function getPath(node) {
     path.unshift([current.row, current.col]);
     current = current.parent;
   }
+  // todo: proper format to Bach
   console.log(path)
   return path;
 }
 
-class AStarSolver {
+class AStarSolver extends ShortestPathMazeSolver {
     constructor(maze) {
-        this.maze = maze
+        super(maze)
     }
 
-    traverse(acc, currentColumn, currentRow) {
-        return aStar(this.maze)
+    traverse(a, currentColumn, currentRow) {
+        const path = aStar(this.maze)
+        let acc = ''
+        path.forEach(p => {
+            acc += `(${p.col} ${p.row} ${this.distance(p.col, p.row)} 160) `;
+        })
+        return acc
     }
 }
 
